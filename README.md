@@ -1,26 +1,6 @@
-# proj-template
-simple template for ylab projects
+# ANDES: Algorithm for Network Data Embedding and Similarity analysis
+This repository contains the scripts to run the ANDES method and corresponding analysis.
 
-This repo includes a basic `.gitignore` with common files to exclude, but this should obviously be pared down / additional files should be added as necessary.
-
-There is also support for [super-linter](https://github.com/github/super-linter) as a [GitHub action](https://docs.github.com/en/free-pro-team@latest/actions), which essentially just means that all code will be automatically linted on push / when PRs are opened. Make sure all checks pass!
-
-The directory structure is inspired by [this article](https://medium.com/outlier-bio-blog/a-quick-guide-to-organizing-data-science-projects-updated-for-2016-4cbb1e6dac71), which is based off of this [classic article](https://journals.plos.org/ploscompbiol/article?id=10.1371/journal.pcbi.1000424) on organizing projects, and makes a good starting point for projects.
-
-## conda environment
-The `env.yml` file should be updated accordingly for projects that use python, so that a new conda environment can be easily installed using the following command:
-```sh
-conda env create -f env.yml
-```
-
-Per usual, to activate the environment:
-```sh
-conda activate new_env_name
-```
-
-If the environment is already set up, to update it for new dependencies / resources:
-```sh
-conda env update -n new_env_name -f env.yml --prune
-```
-
-Note that the `--prune` flag will tell conda to remove any dependencies that may no longer be required in the environment.
+## About
+Embedding methods have emerged as a valuable class of approaches for distilling essential information from complex high-dimensional data into more accessible lower-dimensional spaces. Applications of embedding methods to biological data have demonstrated that gene embeddings can effectively capture physical, structural, and functional relationships between genes. This utility has largely been demonstrated by using gene embeddings for downstream machine learning tasks. Much less has been done to examine the embeddings directly. Limited efforts towards comparing gene sets typically opt to compare simple mean embeddings between sets.
+Here, we propose a novel best-match approach that considers gene similarity while reconciling gene set diversity. We demonstrate that our method can better represent gene set similarity compared to existing methods in both single-species and cross-species settings. In addition, by employing our best-match concept on a gene embedding space made from protein-protein interactions, we developed a novel rank-based gene set enrichment analysis method that achieves state-of-the-art performance.
