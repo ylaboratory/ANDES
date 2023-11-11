@@ -31,5 +31,5 @@ python src/andes.py --emb embedding_file.csv --genelist embedding_gene_ids.txt -
 ANDES performing GSEA can be run through the command line as follows:
 
 ```sh
-python src/andes_gsea.py --emb embedding_file.csv --genelist embedding_gene_ids.txt --geneset gene_set_database.gmt --rankedlist ranked_genes.rnk --out output_file.csv -n num_processor
+python src/andes_gsea.py --emb embedding_file.csv --genelist embedding_gene_ids.txt --geneset gene_set_database.gmt --rankedlist ranked_genes.txt --out output_file.csv -n num_processor
 ```
