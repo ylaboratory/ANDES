@@ -12,3 +12,24 @@ ANDES's method has two main functions:
 
 These functions are implemented in `src/set_analysis_fun.py`. The demo
 jupyter notebook (`demo.ipynb`) illustrates how to use these two funcions
+
+
+## Usage
+This project uses conda to manage the required packages and setup a virtual environment. Once conda is installed on your machine get started by setting up the virtual environment.
+
+```sh
+conda env create -f env.yml
+conda activate ANDES
+```
+
+ANDES can be run through the command line as follows:
+
+```sh
+python src/andes.py --emb embedding_file.csv --genelist embedding_gene_ids.txt --geneset1 first_gene_set_database.gmt --geneset2 second_gene_set_database.gmt --out output_file.csv -n num_processor
+```
+
+ANDES performing GSEA can be run through the command line as follows:
+
+```sh
+python src/andes_gsea.py --emb embedding_file.csv --genelist embedding_gene_ids.txt --geneset gene_set_database.gmt --rankedlist ranked_genes.txt --out output_file.csv -n num_processor
+```
