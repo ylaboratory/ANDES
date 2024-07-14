@@ -1,0 +1,3 @@
+"","READ.TITLE","READ.REL.SCORE","READ.MATCHED.GENES","READ.TOTAL.GENES"
+"hsa04152","AMPK signaling pathway",8.8,1,132
+"hsa05216","Thyroid cancer",6.07,1,30
