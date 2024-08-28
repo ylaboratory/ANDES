@@ -8,6 +8,7 @@ from sklearn import metrics
 from multiprocessing import Pool
 import load_data as ld
 import set_analysis_func as func
+import expression_analysis_func as expression_analysis_func
 
 
 if __name__=='__main__':
@@ -19,10 +20,14 @@ if __name__=='__main__':
                         help='input file path and file name for embedding genes')
     parser.add_argument('--geneset', dest='geneset_f', type=str,
                         help='input file path and file name for the gene set database')
-    parser.add_argument('--rankedlist', dest='rankedlist_f', type=str,
+    parser.add_argument('--rankedlist', dest='rankedlist_f', type=str, default='',
                         help='input file path and file name for the ranked gene list')
+    parser.add_argument('--expressionfile', dest='expression_f', type=str, default='',
+                        help='input file path and file name for the expression file. Expression file is required to calculate empirical pvalue')
     parser.add_argument('--out', dest='out_f', type=str,
                         help='output file path and name')
+    parser.add_argument('--empr', dest='empr', action='store_true',
+                        help='calculate empirical pvalue based on expression data with permutated label')
     parser.add_argument('-n', '--n_processor', dest='n_process', type=int, default=10,
                         help='number of processors')
     parser.add_argument('--min', dest='min_size', type=int, default=10,
@@ -31,6 +36,13 @@ if __name__=='__main__':
                         help='the maximum number of genes in a set')
 
     args = parser.parse_args()
+    
+    if args.expression_f == '' and args.rankedlist_f == '':
+        print('error: expression file path and rank listed file path cannot both be empty')
+        sys.exit(0) 
+    if args.empr and args.expression_f == '':
+        print('error: to calculate empirical pvalue, expression file is required')
+        sys.exit(0) 
 
     # load embedding
     node_vectors = np.loadtxt(args.emb_f, delimiter=',')
@@ -68,19 +80,26 @@ if __name__=='__main__':
         
     geneset_all_genes = geneset_all_genes.intersection(node_list)
     geneset_all_indices = [g_node2index[x] for x in geneset_all_genes]
-    geneset_terms = list(geneset_indices.keys())
+    # geneset_terms = list(geneset_indices.keys())
+    geneset_terms = ['GO:0071466', 'GO:0006805', 'GO:0009410']
 
     print('finish load gene set database')
     print(str(len(geneset_terms)), 'terms,', str(len(geneset_all_indices)), 'background genes')
 
     #load ranked list
-    ranked_list = pd.read_csv(args.rankedlist_f, sep='\t', 
-                              index_col=0, header=None)
-    ranked_list = [str(y) for y in ranked_list.index]
+    if args.rankedlist_f != '':
+        ranked_list = pd.read_csv(args.rankedlist_f, sep='\t', 
+                                  index_col=0, header=None)
+        ranked_list = [str(y) for y in ranked_list.index]
+    else:
+        data = pd.read_csv(args.expression_f, skiprows=1, sep='\t')
+        condition = open(args.expression_f, 'r').readline().strip().split('\t')
+        ranked_list = expression_analysis_func.expression_data_to_ranked_list(data, condition)
     ranked_list = [g_node2index[y] for y in ranked_list if y in node_list]
     
     print('finish load ranked list')
     print(str(len(ranked_list)), 'genes')
+    
 
     f = partial(func.gsea_andes, ranked_list=ranked_list, matrix=S, 
                 term2indices=geneset_indices,
@@ -88,6 +107,25 @@ if __name__=='__main__':
 
     with Pool(args.n_process) as p:
         rets = p.map(f, geneset_terms)
-
+        
     zscores = pd.DataFrame([x[1] for x in rets], index=geneset_terms, columns=['z-score'])
     zscores.to_csv(args.out_f, sep=',')
+
+    if args.empr:
+        def get_empirical_background(i):
+            shuffled_ranked_list = expression_analysis_func.expression_data_to_ranked_list_label_shuffled(data, condition, seed=i)
+            shuffled_ranked_list = [g_node2index[y] for y in shuffled_ranked_list if y in node_list]
+            f = partial(func.gsea_andes, ranked_list=shuffled_ranked_list, 
+                        matrix=S, term2indices=geneset_indices,
+                        annotated_indices=geneset_all_indices, ite=100)
+            rets = [f(x)[1] for x in geneset_terms]
+            return rets
+        
+        with Pool(args.n_process) as p:
+            rets = p.map(get_empirical_background, [i for i in range(100)])
+        background_scores = np.array(rets)
+        
+    empirical_pvalue = 1-np.sum(background_scores.T < np.array(zscores), axis=1)/100
+    empirical_pvalue = pd.DataFrame(empirical_pvalue, index=geneset_terms, columns=['empirical pvalue'])
+    empirical_pvalue.to_csv(args.out_f+'_p_value.csv', sep=',')
+        
