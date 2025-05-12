@@ -1,35 +1,54 @@
-# ANDES: Algorithm for Network Data Embedding and Similarity analysis
-This repository contains the scripts to run the ANDES method and corresponding analysis.
+# ANDES
 
-## About
-Embedding methods have emerged as a valuable class of approaches for distilling essential information from complex high-dimensional data into more accessible lower-dimensional spaces. Applications of embedding methods to biological data have demonstrated that gene embeddings can effectively capture physical, structural, and functional relationships between genes. This utility has largely been demonstrated by using gene embeddings for downstream machine learning tasks. Much less has been done to examine the embeddings directly. Limited efforts towards comparing gene sets typically opt to compare simple mean embeddings between sets.
-Here, we propose a novel best-match approach that considers gene similarity while reconciling gene set diversity. We demonstrate that our method can better represent gene set similarity compared to existing methods in both single-species and cross-species settings. In addition, by employing our best-match concept on a gene embedding space made from protein-protein interactions, we developed a novel rank-based gene set enrichment analysis method that achieves state-of-the-art performance.
+## Algorithm for Network Data Embedding and Similarity analysis
 
-ANDES's method has two main functions:
+ANDES is a suite of standalone scripts for comparing similarity between gene sets using precomputed gene embeddings.
+It includes a consensus protein–protein interaction network embedding generated with node2vec and a sample
+geneset database (Gene Ontology Biological Process genesets for _Homo Sapiens_).
+
+ANDES has two main functions:
 
   1. calculating gene sets similarity in a embedding space
   2. ranked-based GSEA using gene embedding information
 
-These functions are implemented in `src/set_analysis_fun.py`. The demo
-jupyter notebook (`demo.ipynb`) illustrates how to use these two funcions
+These functions are implemented in `src/set_analysis_fun.py` and the demo
+jupyter notebook (`demo.ipynb`) shows sample usage.
 
+### Features
 
-## Usage
-This project uses conda to manage the required packages and setup a virtual environment. Once conda is installed on your machine get started by setting up the virtual environment.
+- Gene-set similarity: Compute pairwise similarity scores between two gene sets in embedding space.
+- Embedding-based GSEA: Perform a ranked Gene Set Enrichment Analysis (GSEA) using embedding-derived gene rankings.
 
+## Citation
+
+If you use ANDES in your work, please cite:
+> [A best-match approach for gene set analyses in embedding spaces.](https://pubmed.ncbi.nlm.nih.gov/39231608/)
+Li L, Dannenfelser R, Cruz C, Yao V. Genome Research. 2024.
+
+## Installation
+
+1. Install conda if you haven't already
+2. Create and activate the ANDES environment:
+   
 ```sh
 conda env create -f env.yml
 conda activate ANDES
 ```
 
-ANDES can be run through the command line as follows:
+## Usage
+
+To quickly get started we recommend looking at our `demo.ipynb`. Alternatively, ANDES can be run
+from the command line in both modes with the following commands.
+
+Compute similarity between all pairs of genesets in two databases / gmt files:
 
 ```sh
 python src/andes.py --emb embedding_file.csv --genelist embedding_gene_ids.txt --geneset1 first_gene_set_database.gmt --geneset2 second_gene_set_database.gmt --out output_file.csv -n num_processor
 ```
 
-ANDES performing GSEA can be run through the command line as follows:
+Compute a ranked-based comparison for a geneset database (such as Gene Ontology) given a ranked list of genes 
 
 ```sh
 python src/andes_gsea.py --emb embedding_file.csv --genelist embedding_gene_ids.txt --geneset gene_set_database.gmt --rankedlist ranked_genes.txt --out output_file.csv -n num_processor
 ```
+
