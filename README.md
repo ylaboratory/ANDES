@@ -1,6 +1,6 @@
 # ANDES
 
-## Algorithm for Network Data Embedding and Similarity analysis
+### Algorithm for Network Data Embedding and Similarity analysis
 
 ANDES is a suite of standalone scripts for comparing similarity between gene sets using precomputed gene embeddings.
 It includes a consensus protein–protein interaction network embedding generated with node2vec and a sample
