@@ -6,18 +6,13 @@ ANDES is a suite of standalone scripts for comparing similarity between gene set
 It includes a consensus protein–protein interaction network embedding generated with node2vec and a sample
 geneset database (Gene Ontology Biological Process genesets for _Homo Sapiens_).
 
-ANDES has two main functions:
-
-  1. calculating gene sets similarity in a embedding space
-  2. ranked-based GSEA using gene embedding information
-
-These functions are implemented in `src/set_analysis_fun.py` and the demo
-jupyter notebook (`demo.ipynb`) shows sample usage.
-
 ### Features
 
 - Gene-set similarity: Compute pairwise similarity scores between two gene sets in embedding space.
 - Embedding-based GSEA: Perform a ranked Gene Set Enrichment Analysis (GSEA) using embedding-derived gene rankings.
+
+These functions are implemented in `src/set_analysis_fun.py` and the demo
+jupyter notebook (`demo.ipynb`) shows sample usage.
 
 ## Citation
 
